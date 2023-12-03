@@ -1,0 +1,18 @@
+{
+  "name": "smile-dirnking-server",
+  "version": "1.0.0",
+  "description": "This is Smile Drinking Water Server File",
+  "main": "index.js",
+  "scripts": {
+    "start": "nodemon index.js",
+    "test": "Node index.js"
+  },
+  "author": "Md Shijan Ali",
+  "license": "ISC",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.18.2",
+    "mysql": "^2.18.1",
+    "nodemon": "^3.0.2"
+  }
+}
