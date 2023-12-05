@@ -39,6 +39,20 @@ app.get('/products', (req, res) => {
 })
 
 
+app.get('/api/infos', (req, res) => {
+  const query = 'SELECT * FROM website_info';
+
+  connection.query(query, (err, result) => {
+    if (err) {
+      console.error('Error executing the query:', err);
+      res.status(500).send('Internal Server Error');
+      return;
+    }
+    res.json(result)
+  })
+})
+
+
 // API endpoint to insert product data
 app.post('/api/products', (req, res) => {
   const { img, title, description, code } = req.body;
@@ -101,6 +115,55 @@ app.put('/api/products/:id', (req, res) => {
   });
 });
 
+
+
+// Update Website Info API
+app.put('/api/update/:id', (req, res) => {
+  const websiteId = req.params.id;
+  const websiteDetails = req.body;
+
+  const updateQuery = `
+    UPDATE website_info
+    SET
+      name = ?,
+      email = ?,
+      facebook = ?,
+      twitter = ?,
+      linkedin = ?,
+      img = ?,
+      websiteName = ?,
+      websiteAddress = ?,
+      telephone = ?,
+      phone = ?,
+      logoImg = ?,
+      logoWhiteImg = ?
+    WHERE id = ?`;
+
+  connection.query(updateQuery, [
+    websiteDetails.name,
+    websiteDetails.email,
+    websiteDetails.facebook,
+    websiteDetails.twitter,
+    websiteDetails.linkedin,
+    websiteDetails.photo,
+    websiteDetails.websitename,
+    websiteDetails.websiteaddress,
+    websiteDetails.telephone,
+    websiteDetails.phone,
+    websiteDetails.logo,
+    websiteDetails.logoWhite,
+    websiteId,
+  ], (err, results) => {
+    if (err) {
+      console.error('Error updating website details:', err.message);
+      res.status(500).json({ error: 'Internal Server Error' });
+    } else if (results.affectedRows > 0) {
+      res.status(200).json({ message: 'Website details updated successfully' });
+    } else {
+      res.status(404).json({ message: 'Website not found' });
+    }
+  });
+});
 
 
 
