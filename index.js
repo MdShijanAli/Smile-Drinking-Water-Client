@@ -52,6 +52,19 @@ app.get('/api/infos', (req, res) => {
   })
 })
 
+app.get('/api/orders', (req, res) => {
+  const query = 'SELECT * FROM orders ORDER BY date DESC';
+
+  connection.query(query, (err, result) => {
+    if (err) {
+      console.error('Error executing the query:', err);
+      res.status(500).send('Internal Server Error');
+      return;
+    }
+    res.json(result)
+  })
+})
+
 
 // API endpoint to insert product data
 app.post('/api/products', (req, res) => {
@@ -72,6 +85,57 @@ app.post('/api/products', (req, res) => {
     res.status(201).send('Product inserted successfully');
   });
 });
+
+app.post('/api/order', (req, res) => {
+  const { firstName, lastName, email, phone, fullAddress, service, division, district, upazila, unionn } = req.body;
+  console.log("Order Data", req.body);
+
+  const query = 'INSERT INTO orders (firstName, lastName, email, phone, fullAddress, service, division, district, upazila, unionn) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
+  const values = [firstName, lastName, email, phone, fullAddress, service, division, district, upazila, unionn];
+
+  connection.query(query, values, (err, result) => {
+    if (err) {
+      console.error('Error inserting Orders:', err);
+      res.status(500).send('Internal Server Error');
+      return;
+    }
+    console.log('Orders Insert successfully');
+    res.status(201).send('Orders Inserted successfully')
+  })
+})
+
+
+app.post('/api/job', (req, res) => {
+  const { title, description, location, jobType, vacancy, applyLastDate} = req.body;
+  const query = 'INSERT INTO jobs (title, description, location, jobType, vacancy, applyLastDate) VALUES (?, ?, ?, ?, ?, ?)';
+  const values = [title, description, location, jobType, vacancy, applyLastDate];
+
+  connection.query(query, values, (err, result)=> {
+    if(err) {
+      console.error('Error inserting Jobs:', err);
+      res.status(201).send('Job Inserted Successfully')
+      return;
+    }
+    console.log('Jobs Inserted Succesfully')
+    res.status(201).send('Job Inserted Successfully')
+  })
+})
+
+app.get('/api/jobs', (req, res) => {
+  const query = 'SELECT * from jobs ORDER BY jobPostTime DESC';
+
+  connection.query(query, (err, result) => {
+    if (err) {
+      console.error('Error Gitting Jobs:', err);
+      res.status(201).send('Job Gets Successfully')
+      return;
+    }
+    console.log('Jobs Fetch Succesfully')
+    res.json(result)
+  })
+})
+
+
 
 // Delete product route
 app.delete('/api/products/:id', (req, res) => {
@@ -114,6 +178,24 @@ app.put('/api/products/:id', (req, res) => {
     res.status(200).send('Product updated successfully');
   });
 });
+
+app.put('/api/job/:id', (req, res) => {
+  const jobId = req.params.id;
+  const { title, location, jobType, vacancy, applyLastDate, description } = req.body;
+  const query = 'UPDATE jobs SET title = ?, location = ?, jobType = ?, vacancy = ?, applyLastDate = ?, description = ? WHERE id = ?';
+  const values = [title, location, jobType, vacancy, applyLastDate, description, jobId];
+
+  connection.query(query, values, (err, result) => {
+    if (err) {
+      console.error('Error updating Jobs:', err);
+    res.status(500).send('Internal Server Error');
+    return;
+    }
+    console.log('Job updated successfully');
+    res.status(200).send('Job updated successfully');
+  })
+
+})
 
 
 
