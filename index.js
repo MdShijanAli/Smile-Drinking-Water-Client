@@ -62,6 +62,7 @@ app.get('/api/orders', (req, res) => {
       return;
     }
     res.json(result)
+    res.send(result)
   })
 })
 
@@ -104,6 +105,40 @@ app.post('/api/order', (req, res) => {
   })
 })
 
+// POst Applications
+
+app.post('/api/application', (req, res) => {
+  const { firstName, lastName, email, phone, fullAddress, division, district, upazila, unionn, cv, jobTitle } = req.body;
+  const query = 'INSERT INTO applications (firstName, lastName, email, phone, fullAddress, division, district, upazila, unionn, cv, jobTitle) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
+  const values = [firstName, lastName, email, phone, fullAddress, division, district, upazila, unionn, cv, jobTitle];
+
+  connection.query(query, values, (err, result) => {
+    if (err) {
+      console.error('Error Inserting Application', err);
+      res.status(500).send('Internal Server Irror');
+      return;
+    }
+    console.log('Application Intert Successfull')
+    res.status(201).send('Applicaiton Inserted Sucsessfully')
+  })
+})
+
+// Get aspplications Data
+
+app.get('/api/applications', (req, res) => {
+  const query = 'SELECT * from applications';
+
+  connection.query(query, (err, result) => {
+    if (err) {
+      console.log('Error Getting Application', err);
+      res.status(201).send('Applications Not Get');
+      return;
+    }
+    console.log('Applications Fetch Successfully');
+    res.json(result);
+  })
+})
+
 
 app.post('/api/job', (req, res) => {
   const { title, description, location, jobType, vacancy, applyLastDate} = req.body;
@@ -113,7 +148,7 @@ app.post('/api/job', (req, res) => {
   connection.query(query, values, (err, result)=> {
     if(err) {
       console.error('Error inserting Jobs:', err);
-      res.status(201).send('Job Inserted Successfully')
+      res.status(500).send('Error inserting Jobs')
       return;
     }
     console.log('Jobs Inserted Succesfully')
@@ -127,7 +162,7 @@ app.get('/api/jobs', (req, res) => {
   connection.query(query, (err, result) => {
     if (err) {
       console.error('Error Gitting Jobs:', err);
-      res.status(201).send('Job Gets Successfully')
+      res.status(201).send('Job Gets Error')
       return;
     }
     console.log('Jobs Fetch Succesfully')
@@ -152,6 +187,25 @@ app.delete('/api/products/:id', (req, res) => {
 
     console.log('Product deleted successfully');
     res.status(200).send('Product deleted successfully');
+  });
+});
+
+
+// Delete Job route
+app.delete('/api/job/:id', (req, res) => {
+  const jobId = req.params.id;
+
+  const query = 'DELETE FROM jobs WHERE id = ?';
+
+  connection.query(query, [jobId], (err, result) => {
+    if (err) {
+      console.error('Error deleting Job:', err);
+      res.status(500).send('Internal Server Error');
+      return;
+    }
+
+    console.log('Job deleted successfully');
+    res.status(200).send('Job deleted successfully');
   });
 });
 
@@ -248,6 +302,10 @@ app.put('/api/update/:id', (req, res) => {
 });
 
 
+
+app.get('/', (req, res) => {
+  res.send('Smile Drinking Water Website Server Api Running')
+})
 
 
 app.listen(port, () => {

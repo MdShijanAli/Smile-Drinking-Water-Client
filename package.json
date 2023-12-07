@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "nodemon index.js",
+    "build": "node index.js",
     "test": "Node index.js"
   },
   "author": "Md Shijan Ali",
