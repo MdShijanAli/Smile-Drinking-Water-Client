@@ -3,15 +3,24 @@ const cors = require('cors');
 const app = express();
 app.use(express.json()); 
 const mysql = require('mysql');
-const port = 3000;
+const port = process.env.PORT || 3030;
 app.use(cors()); // Enable CORS for all routes
 
+require('dotenv').config();
 
-const connection = mysql.createConnection({
+
+
+/* const connection = mysql.createConnection({
   host: 'localhost',
-  user: 'root',
-  password: '',
-  database: 'smile_drinking_water',
+  user: 'zealtechweb_smile_drinking_water',
+  password: 'smile_drinking_water',
+  database: 'zealtechweb_smile_drinking_water',
+}); */
+const connection = mysql.createConnection({
+  host: process.env.DB_HOST,
+  user: process.env.DB_USER,
+  password: process.env.DB_PASSWORD,
+  database: process.env.DB_DATABASE,
 });
 
 connection.connect((err) => {
