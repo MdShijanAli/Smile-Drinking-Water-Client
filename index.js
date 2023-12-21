@@ -9,13 +9,6 @@ app.use(cors()); // Enable CORS for all routes
 require('dotenv').config();
 
 
-
-/* const connection = mysql.createConnection({
-  host: 'localhost',
-  user: 'zealtechweb_smile_drinking_water',
-  password: 'smile_drinking_water',
-  database: 'zealtechweb_smile_drinking_water',
-}); */
 const connection = mysql.createConnection({
   host: process.env.DB_HOST,
   user: process.env.DB_USER,
@@ -71,7 +64,19 @@ app.get('/api/orders', (req, res) => {
       return;
     }
     res.json(result)
-    res.send(result)
+  })
+})
+
+app.get('/api/auth', (req, res) => {
+  const query = 'SELECT * from auth WHERE id = 1';
+
+  connection.query(query, (err, result) => {
+    if (err) {
+      console.error('Error executing the query:', err);
+      res.status(500).send('Internal Server Error');
+      return;
+    }
+    res.json(result)
   })
 })
 
@@ -113,6 +118,8 @@ app.post('/api/order', (req, res) => {
     res.status(201).send('Orders Inserted successfully')
   })
 })
+
+
 
 // POst Applications
 
@@ -259,6 +266,47 @@ app.put('/api/job/:id', (req, res) => {
   })
 
 })
+
+
+app.put('/api/order/:id', (req, res) => {
+  const orderID = req.params.id;
+  const { status } = req.body;  
+  
+  const query = 'UPDATE orders SET status = ? WHERE id = ?';
+  const values = [status, orderID];
+  
+  connection.query(query, values, (err, result) => {
+    if (err) {
+      console.error('Error updating Order:', err);
+      res.status(500).send('Internal Server Error');
+      return;
+    }
+    
+    console.log('Order updated successfully');
+    res.status(200).send('Order updated successfully');
+  });
+});
+
+
+app.put('/api/auth/update/:id', (req, res) => {
+  const updateID = req.params.id;
+  const { password } = req.body;
+  console.log("password", password)
+  const query = "UPDATE auth SET password = ? WHERE id = ?";
+  const values = [password, updateID];
+  console.log("valkues", values)
+
+  connection.query(query, values, (err, result) => {
+    if (err) {
+      console.error('Error updating Password:', err);
+      return res.status(500).json({ error: 'Internal Server Error', details: err.message });
+    }
+    console.log('Password updated successfully');
+    return res.status(200).json({ message: 'Password updated successfully' });
+  });
+  
+});
+
 
 
 
